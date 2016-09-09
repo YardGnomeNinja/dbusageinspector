@@ -1,19 +1,25 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
 
 namespace DBUsageInspector
 {
-    class FileService
+    internal class FileService
     {
-        private string _rootPath;
-        public DirectoryInfo RootDirectory;
         public HashSet<string> Extensions;
+        public DirectoryInfo RootDirectory;
+        private string _rootPath;
+
+        public FileService()
+        {
+        }
+
+        public FileService(string rootPath, HashSet<string> extensions)
+        {
+            RootPath = rootPath;
+            Extensions = extensions;
+        }
 
         public string RootPath
         {
@@ -26,12 +32,24 @@ namespace DBUsageInspector
             }
         }
 
-        public FileService() { }
-
-        public FileService(string rootPath, HashSet<string> extensions)
+        public IDictionary<ReferenceObject, ReferenceObject> GetReferencesToSqlServerObjects(IList<ReferenceObject> sqlServerObjects)
         {
-            RootPath = rootPath;
-            Extensions = extensions;
+            IDictionary<ReferenceObject, ReferenceObject> returnValue = new Dictionary<ReferenceObject, ReferenceObject>();
+
+            List<FileInfo> files = GetFiles(RootDirectory);
+
+            foreach (FileInfo originalFile in files)
+            {
+                string fileContent = originalFile.OpenText().ReadToEnd();
+                string cleanContent = ParsingService.Normalize(fileContent, originalFile.Extension);
+
+                foreach (KeyValuePair<ReferenceObject, ReferenceObject> objectPair in ParsingService.GetReferences(originalFile.FullName, "CODE", cleanContent, sqlServerObjects))
+                {
+                    returnValue.Add(objectPair.Key, objectPair.Value);
+                }
+            }
+
+            return returnValue;
         }
 
         public List<ReferenceObject> GetSqlScriptObjects()
@@ -43,6 +61,54 @@ namespace DBUsageInspector
             returnValue = GetSqlScriptCreateLines(files);
 
             return returnValue;
+        }
+
+        public IDictionary<ReferenceObject, ReferenceObject> LoadReferenceObjects()
+        {
+            IDictionary<ReferenceObject, ReferenceObject> returnValue = new Dictionary<ReferenceObject, ReferenceObject>();
+
+            FileInfo file = new FileInfo("./references.dbui");
+
+            if (file.Exists)
+            {
+                using (StreamReader streamReader = file.OpenText())
+                {
+                    while (!streamReader.EndOfStream)
+                    {
+                        string line = streamReader.ReadLine();
+
+                        if (line.Trim() != string.Empty)
+                        {
+                            KeyValuePair<ReferenceObject, ReferenceObject> referenceObject = new KeyValuePair<ReferenceObject, ReferenceObject>();
+                            referenceObject = (KeyValuePair<ReferenceObject, ReferenceObject>)JsonConvert.DeserializeObject(line, referenceObject.GetType());
+
+                            returnValue.Add(referenceObject);
+                        }
+                    }
+                }
+            }
+
+            return returnValue;
+        }
+
+        public void SaveReferenceObjects(IDictionary<ReferenceObject, ReferenceObject> references)
+        {
+            FileInfo file = new FileInfo("./references.dbui");
+
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+            using (TextWriter textWriter = file.CreateText())
+            {
+                foreach (KeyValuePair<ReferenceObject, ReferenceObject> reference in references)
+                {
+                    string json = JsonConvert.SerializeObject(reference);
+
+                    textWriter.WriteLine(json);
+                }
+            }
         }
 
         private List<FileInfo> GetFiles(DirectoryInfo folder)
@@ -96,74 +162,6 @@ namespace DBUsageInspector
             }
 
             returnValue.Sort();
-
-            return returnValue;
-        }
-
-        public IDictionary<ReferenceObject, ReferenceObject> GetReferencesToSqlServerObjects(IList<ReferenceObject> sqlServerObjects)
-        {
-            IDictionary<ReferenceObject, ReferenceObject> returnValue = new Dictionary<ReferenceObject, ReferenceObject>();
-
-            List<FileInfo> files = GetFiles(RootDirectory);
-
-            foreach (FileInfo originalFile in files)
-            {
-                string fileContent = originalFile.OpenText().ReadToEnd();
-                string cleanContent = ParsingService.Normalize(fileContent, originalFile.Extension);
-
-                foreach (KeyValuePair<ReferenceObject, ReferenceObject> objectPair in ParsingService.GetReferences(originalFile.FullName, "CODE", cleanContent, sqlServerObjects))
-                {
-                    returnValue.Add(objectPair.Key, objectPair.Value);
-                }
-            }
-
-            return returnValue;
-        }
-
-        public void SaveReferenceObjects(IDictionary<ReferenceObject, ReferenceObject> references)
-        {
-            FileInfo file = new FileInfo("./references.dbui");
-
-            if (file.Exists)
-            {
-                file.Delete();
-            }
-
-            using (TextWriter textWriter = file.CreateText())
-            {
-                foreach (KeyValuePair<ReferenceObject, ReferenceObject> reference in references)
-                {
-                    string json = JsonConvert.SerializeObject(reference);
-
-                    textWriter.WriteLine(json);
-                }
-            }
-        }
-
-        public IDictionary<ReferenceObject, ReferenceObject> LoadReferenceObjects()
-        {
-            IDictionary<ReferenceObject, ReferenceObject> returnValue = new Dictionary<ReferenceObject, ReferenceObject>();
-
-            FileInfo file = new FileInfo("./references.dbui");
-
-            if (file.Exists)
-            {
-                using (StreamReader streamReader = file.OpenText())
-                {
-                    while (!streamReader.EndOfStream)
-                    {
-                        string line = streamReader.ReadLine();
-
-                        if(line.Trim() != string.Empty)
-                        {
-                            KeyValuePair<ReferenceObject, ReferenceObject> referenceObject = new KeyValuePair<ReferenceObject, ReferenceObject>();
-                            referenceObject = (KeyValuePair<ReferenceObject, ReferenceObject>)JsonConvert.DeserializeObject(line, referenceObject.GetType());
-
-                            returnValue.Add(referenceObject);
-                        }
-                    }
-                }
-            }
 
             return returnValue;
         }

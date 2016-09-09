@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -10,6 +6,63 @@ namespace DBUsageInspector
 {
     public static class ParsingService
     {
+        public static IDictionary<ReferenceObject, ReferenceObject> GetReferences(string referencerName, string referencerType, string referencerContent, IList<ReferenceObject> sqlServerObjects)
+        {
+            IDictionary<ReferenceObject, ReferenceObject> returnValue = new Dictionary<ReferenceObject, ReferenceObject>();
+
+            Dictionary<string, string> relationshipTypes = new Dictionary<string, string>();
+            relationshipTypes.Add("FROM", "SELECTS_FROM");
+            relationshipTypes.Add("JOIN", "SELECTS_FROM");
+            relationshipTypes.Add("INTO", "INSERTS_INTO");
+            relationshipTypes.Add("UPDATE", "UPDATES");
+            relationshipTypes.Add("DELETE FROM", "DELETES_FROM");
+            relationshipTypes.Add("EXECUTE", "EXECUTES");
+            relationshipTypes.Add("CALL", "CALLS");
+            relationshipTypes.Add("REFERENCES", "REFERENCES");
+
+            foreach (ReferenceObject item in sqlServerObjects)
+            {
+                if (referencerContent.Contains(item.Name)) // "Is there any reason to look closer?" check
+                {
+                    Regex itemName = new Regex(@"(FROM|JOIN|INTO|UPDATE|DELETE FROM)?\s" + item.Name + @"\s");
+
+                    MatchCollection references = itemName.Matches(referencerContent);
+
+                    if (references.Count > 0)
+                    {
+                        if (item.Type == "TABLE" || item.Type == "VIEW")
+                        {
+                            // Iterate references and determine the type
+                            foreach (Match reference in references)
+                            {
+                                if (reference.Groups.Count > 1 && reference.Groups[1].ToString() != string.Empty) // Object was preceeded by a recognized SQL statement
+                                {
+                                    string sqlStatement = reference.Groups[1].ToString();
+
+                                    returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes[sqlStatement]), new ReferenceObject(item.Name, item.Type, string.Empty));
+                                }
+                            }
+                        }
+                        else if (item.Type == "PROCEDURE")
+                        {
+                            returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes["EXECUTE"]), new ReferenceObject(item.Name, item.Type, string.Empty));
+                        }
+                        else if (item.Type == "FUNCTION")
+                        {
+                            returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes["CALL"]), new ReferenceObject(item.Name, item.Type, string.Empty));
+                        }
+                        else
+                        {
+                            // Default any referenced object not defined above
+                            returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes["REFERENCES"]), new ReferenceObject(item.Name, item.Type, string.Empty));
+                        }
+                    }
+                }
+            }
+
+            return returnValue;
+        }
+
         public static string Normalize(string input, string extension)
         {
             string returnValue = string.Empty;
@@ -79,7 +132,6 @@ namespace DBUsageInspector
 
                         isFirstLine = false;
                     }
-
                 } while (tempLine != null);
             }
 
@@ -105,63 +157,6 @@ namespace DBUsageInspector
             returnValue = rightBracket.Replace(returnValue, "");
             returnValue = dbo.Replace(returnValue, "");
             returnValue = space.Replace(returnValue, " ");
-
-            return returnValue;
-        }
-
-        public static IDictionary<ReferenceObject, ReferenceObject> GetReferences(string referencerName, string referencerType, string referencerContent, IList<ReferenceObject> sqlServerObjects)
-        {
-            IDictionary<ReferenceObject, ReferenceObject> returnValue = new Dictionary<ReferenceObject, ReferenceObject>();
-
-            Dictionary<string, string> relationshipTypes = new Dictionary<string, string>();
-            relationshipTypes.Add("FROM", "SELECTS_FROM");
-            relationshipTypes.Add("JOIN", "SELECTS_FROM");
-            relationshipTypes.Add("INTO", "INSERTS_INTO");
-            relationshipTypes.Add("UPDATE", "UPDATES");
-            relationshipTypes.Add("DELETE FROM", "DELETES_FROM");
-            relationshipTypes.Add("EXECUTE", "EXECUTES");
-            relationshipTypes.Add("CALL", "CALLS");
-            relationshipTypes.Add("REFERENCES", "REFERENCES");
-
-            foreach (ReferenceObject item in sqlServerObjects)
-            {
-                if (referencerContent.Contains(item.Name)) // "Is there any reason to look closer?" check
-                {
-                    Regex itemName = new Regex(@"(FROM|JOIN|INTO|UPDATE|DELETE FROM)?\s" + item.Name + @"\s");
-
-                    MatchCollection references = itemName.Matches(referencerContent);
-
-                    if (references.Count > 0)
-                    {
-                        if (item.Type == "TABLE" || item.Type == "VIEW")
-                        {
-                            // Iterate references and determine the type
-                            foreach (Match reference in references)
-                            {
-                                if (reference.Groups.Count > 1 && reference.Groups[1].ToString() != string.Empty) // Object was preceeded by a recognized SQL statement
-                                {
-                                    string sqlStatement = reference.Groups[1].ToString();
-
-                                    returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes[sqlStatement]), new ReferenceObject(item.Name, item.Type, string.Empty));
-                                }
-                            }
-                        }
-                        else if (item.Type == "PROCEDURE")
-                        {
-                            returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes["EXECUTE"]), new ReferenceObject(item.Name, item.Type, string.Empty));
-                        }
-                        else if (item.Type == "FUNCTION")
-                        {
-                            returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes["CALL"]), new ReferenceObject(item.Name, item.Type, string.Empty));
-                        }
-                        else
-                        {
-                            // Default any referenced object not defined above
-                            returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes["REFERENCES"]), new ReferenceObject(item.Name, item.Type, string.Empty));
-                        }
-                    }
-                }
-            }
 
             return returnValue;
         }

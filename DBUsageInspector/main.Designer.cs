@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.sqlScriptPathDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.filePathDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.sqlScriptPathLabel = new System.Windows.Forms.Label();
             this.sqlScriptPath = new System.Windows.Forms.TextBox();
             this.mainTooltip = new System.Windows.Forms.ToolTip(this.components);
@@ -72,10 +72,10 @@
             this.sqlScriptObjectPanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // sqlScriptPathDialog
+            // filePathDialog
             // 
-            this.sqlScriptPathDialog.RootFolder = System.Environment.SpecialFolder.MyComputer;
-            this.sqlScriptPathDialog.ShowNewFolderButton = false;
+            this.filePathDialog.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            this.filePathDialog.ShowNewFolderButton = false;
             // 
             // sqlScriptPathLabel
             // 
@@ -155,7 +155,8 @@
             this.codePath.Size = new System.Drawing.Size(638, 20);
             this.codePath.TabIndex = 28;
             this.mainTooltip.SetToolTip(this.codePath, "The top folder containing project code. This folder and its decendents will be se" +
-        "arched for *.vb, *.cs, *.ascx, *.aspx, *.asmx, files.");
+        "arched for *.vb, *.cs, files.");
+            this.codePath.Click += new System.EventHandler(this.codePath_Click);
             this.codePath.TextChanged += new System.EventHandler(this.codePath_TextChanged);
             // 
             // sqlServerConnectionStringLabel
@@ -489,7 +490,7 @@
 
         #endregion
 
-        private System.Windows.Forms.FolderBrowserDialog sqlScriptPathDialog;
+        private System.Windows.Forms.FolderBrowserDialog filePathDialog;
         private System.Windows.Forms.Label sqlScriptPathLabel;
         private System.Windows.Forms.TextBox sqlScriptPath;
         private System.Windows.Forms.ToolTip mainTooltip;

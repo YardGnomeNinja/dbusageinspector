@@ -5,8 +5,8 @@ namespace DBUsageInspector
     public class ReferenceObject : IComparable<ReferenceObject>
     {
         public string Name;
-        public string Type;
         public string Relationship;
+        public string Type;
 
         public ReferenceObject(string name, string type, string relationship)
         {

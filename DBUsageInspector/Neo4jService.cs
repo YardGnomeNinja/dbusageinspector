@@ -1,19 +1,17 @@
-﻿using System;
+﻿using Neo4j.Driver.V1;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Neo4j.Driver.V1;
 
 namespace DBUsageInspector
 {
-    class Neo4jService
+    internal class Neo4jService
     {
+        public string Password;
         public string Url;
         public string Username;
-        public string Password;
 
-        public Neo4jService() { }
+        public Neo4jService()
+        {
+        }
 
         public Neo4jService(string url, string username, string password)
         {

@@ -1,35 +1,11 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DBUsageInspector
 {
     public static class ConfigService
     {
-        public static void SaveConfig(IDictionary<string, string> settings)
-        {
-            FileInfo file = new FileInfo("./config.dbui");
-
-            if (file.Exists)
-            {
-                file.Delete();
-            }
-
-            using (TextWriter textWriter = file.CreateText())
-            {
-                foreach (KeyValuePair<string, string> setting in settings)
-                {
-                    string json = JsonConvert.SerializeObject(setting);
-
-                    textWriter.WriteLine(json);
-                }
-            }
-        }
-
         public static IDictionary<string, string> GetConfigSettings()
         {
             IDictionary<string, string> returnValue = new Dictionary<string, string>();
@@ -56,6 +32,26 @@ namespace DBUsageInspector
             }
 
             return returnValue;
+        }
+
+        public static void SaveConfig(IDictionary<string, string> settings)
+        {
+            FileInfo file = new FileInfo("./config.dbui");
+
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+            using (TextWriter textWriter = file.CreateText())
+            {
+                foreach (KeyValuePair<string, string> setting in settings)
+                {
+                    string json = JsonConvert.SerializeObject(setting);
+
+                    textWriter.WriteLine(json);
+                }
+            }
         }
     }
 }

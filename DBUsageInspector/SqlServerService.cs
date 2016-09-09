@@ -4,11 +4,13 @@ using System.Data.SqlClient;
 
 namespace DBUsageInspector
 {
-    class SqlServerService
+    internal class SqlServerService
     {
         public string ConnectionString;
 
-        public SqlServerService() { }
+        public SqlServerService()
+        {
+        }
 
         public SqlServerService(string connectionString)
         {
@@ -82,10 +84,8 @@ namespace DBUsageInspector
                             "FROM " +
                             "   sys.objects " +
                             "   INNER JOIN sys.sql_modules ON sys.sql_modules.object_id = sys.objects.object_id ";
-                            //"   INNER JOIN sys.sql_modules ON sys.sql_modules.object_id = sys.objects.object_id " +
-                            //"   WHERE sys.objects.name = 'P7_Select_VendorInvoice_List2'";
 
-            List<Tuple<string,string,string>> sqlObjects = new List<Tuple<string, string, string>>();
+            List<Tuple<string, string, string>> sqlObjects = new List<Tuple<string, string, string>>();
 
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
