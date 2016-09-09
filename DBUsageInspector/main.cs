@@ -23,20 +23,48 @@ namespace DBUsageInspector
         {
             InitializeComponent();
 
-            HashSet<string> codeExtensions = new HashSet<string>();
-            codeExtensions.Add(".vb");
-            codeExtensions.Add(".cs");
+            codeFileService = new FileService();
+            sqlScriptFileService = new FileService();
+            sqlServerService = new SqlServerService();
+            neo4jService = new Neo4jService();
 
-            HashSet<string> sqlScriptExtensions = new HashSet<string>();
-            sqlScriptExtensions.Add(".sql");
-
-            codeFileService = new FileService(codePath.Text, codeExtensions);
-            sqlScriptFileService = new FileService(sqlScriptPath.Text, sqlScriptExtensions);
-            sqlServerService = new SqlServerService(sqlServerConnectionString.Text);
-            neo4jService = new Neo4jService(neo4jUrl.Text, neo4jUsername.Text, neo4jPassword.Text);
+            LoadConfig();
 
             // Load reference objects if the save file exists
             LoadReferenceObjects();
+        }
+
+        private void SaveConfig()
+        {
+            IDictionary<string, string> settings = new Dictionary<string, string>();
+
+            settings.Add("codePath", codePath.Text);
+            settings.Add("sqlScriptPath", sqlScriptPath.Text);
+            settings.Add("sqlServerConnectionString", sqlServerConnectionString.Text);
+            settings.Add("neo4jUrl", neo4jUrl.Text);
+            settings.Add("neo4jUsername", neo4jUsername.Text);
+            settings.Add("neo4jPassword", neo4jPassword.Text);
+
+            ConfigService.SaveConfig(settings);
+        }
+
+        private bool LoadConfig()
+        {
+            IDictionary<string, string> settings = ConfigService.GetConfigSettings();
+
+            if (settings.Count > 0)
+            {
+                codePath.Text = settings["codePath"];
+                sqlScriptPath.Text = settings["sqlScriptPath"];
+                sqlServerConnectionString.Text = settings["sqlServerConnectionString"];
+                neo4jUrl.Text = settings["neo4jUrl"];
+                neo4jUsername.Text = settings["neo4jUsername"];
+                neo4jPassword.Text = settings["neo4jPassword"];
+
+                return true;
+            }
+
+            return false;
         }
 
         private void sqlScriptPath_Click(object sender, EventArgs e)
@@ -66,12 +94,20 @@ namespace DBUsageInspector
 
         private void sqlScriptPath_TextChanged(object sender, EventArgs e)
         {
+            HashSet<string> sqlScriptExtensions = new HashSet<string>();
+            sqlScriptExtensions.Add(".sql");
+
             sqlScriptFileService.RootPath = sqlScriptPath.Text;
+            sqlScriptFileService.Extensions = sqlScriptExtensions;
+
+            getSQLScriptObjects.Enabled = true;
         }
 
         private void sqlServerConnectionString_TextChanged(object sender, EventArgs e)
         {
             sqlServerService.ConnectionString = sqlServerConnectionString.Text;
+
+            getSQLServerObjects.Enabled = true;
         }
 
         private void neo4jUrl_TextChanged(object sender, EventArgs e)
@@ -104,6 +140,11 @@ namespace DBUsageInspector
             }
 
             sqlScriptObjectCount.Text = sqlScriptObjectList.Items.Count + " Objects";
+
+            if(sqlScriptObjectList.Items.Count > 0 && sqlServerObjectList.Items.Count > 0)
+            {
+                compareLists.Enabled = true;
+            }
         }
 
         private void getSQLServerObjects_Click(object sender, EventArgs e)
@@ -124,6 +165,11 @@ namespace DBUsageInspector
 
             if (sqlServerObjectList.Items.Count > 0)
             {
+                if (sqlScriptObjectList.Items.Count > 0)
+                {
+                    compareLists.Enabled = true;
+                }
+
                 getCodeReferencesToSqlServerObjects.Enabled = true;
                 getSQLServerReferences.Enabled = true;
             }
@@ -300,7 +346,7 @@ namespace DBUsageInspector
             neo4jService.CreateRelationships(referenceObjects);
 
             DateTime endTime = DateTime.Now;
-            TimeSpan timeSpan = (startTime - endTime);
+            TimeSpan timeSpan = (endTime - startTime);
 
             MessageBox.Show("writeToNeo4j_Click took " + timeSpan.Hours.ToString() + " hours and " + timeSpan.Minutes.ToString() + " minutes and " + timeSpan.Seconds.ToString() + " seconds for " + referenceList.Items.Count + " references");
         }
@@ -321,6 +367,32 @@ namespace DBUsageInspector
 
                 referenceList.Items.Add(new ListViewItem(item));
             }
+
+            if(referenceList.Items.Count > 0)
+            {
+                writeToNeo4j.Enabled = true;
+            }
+        }
+
+        private void main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveConfig();
+        }
+
+        private void clearReferenceList_Click(object sender, EventArgs e)
+        {
+            referenceList.Items.Clear();
+            writeToNeo4j.Enabled = false;
+        }
+
+        private void codePath_TextChanged(object sender, EventArgs e)
+        {
+            HashSet<string> codeExtensions = new HashSet<string>();
+            codeExtensions.Add(".vb");
+            codeExtensions.Add(".cs");
+
+            codeFileService.RootPath = codePath.Text;
+            codeFileService.Extensions = codeExtensions;
         }
     }
 }

@@ -13,6 +13,8 @@ namespace DBUsageInspector
         public string Username;
         public string Password;
 
+        public Neo4jService() { }
+
         public Neo4jService(string url, string username, string password)
         {
             Url = url;

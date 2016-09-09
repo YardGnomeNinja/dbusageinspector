@@ -26,6 +26,8 @@ namespace DBUsageInspector
             }
         }
 
+        public FileService() { }
+
         public FileService(string rootPath, HashSet<string> extensions)
         {
             RootPath = rootPath;

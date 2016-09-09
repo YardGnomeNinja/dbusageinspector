@@ -8,6 +8,8 @@ namespace DBUsageInspector
     {
         public string ConnectionString;
 
+        public SqlServerService() { }
+
         public SqlServerService(string connectionString)
         {
             ConnectionString = connectionString;

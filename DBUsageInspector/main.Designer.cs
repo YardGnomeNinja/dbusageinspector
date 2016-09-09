@@ -47,6 +47,7 @@
             this.referenceList = new System.Windows.Forms.ListView();
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.writeToNeo4j = new System.Windows.Forms.Button();
@@ -66,7 +67,7 @@
             this.ScriptType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.codePathLabel = new System.Windows.Forms.Label();
             this.getCodeReferencesToSqlServerObjects = new System.Windows.Forms.Button();
-            this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.clearReferenceList = new System.Windows.Forms.Button();
             this.sqlServerObjectPanel.SuspendLayout();
             this.sqlScriptObjectPanel.SuspendLayout();
             this.SuspendLayout();
@@ -79,19 +80,20 @@
             // sqlScriptPathLabel
             // 
             this.sqlScriptPathLabel.AutoSize = true;
-            this.sqlScriptPathLabel.Location = new System.Drawing.Point(102, 44);
+            this.sqlScriptPathLabel.Location = new System.Drawing.Point(76, 36);
+            this.sqlScriptPathLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.sqlScriptPathLabel.Name = "sqlScriptPathLabel";
-            this.sqlScriptPathLabel.Size = new System.Drawing.Size(109, 17);
+            this.sqlScriptPathLabel.Size = new System.Drawing.Size(93, 15);
             this.sqlScriptPathLabel.TabIndex = 0;
             this.sqlScriptPathLabel.Text = "SQL Script Path";
             // 
             // sqlScriptPath
             // 
-            this.sqlScriptPath.Location = new System.Drawing.Point(217, 41);
+            this.sqlScriptPath.Location = new System.Drawing.Point(163, 33);
+            this.sqlScriptPath.Margin = new System.Windows.Forms.Padding(2);
             this.sqlScriptPath.Name = "sqlScriptPath";
-            this.sqlScriptPath.Size = new System.Drawing.Size(850, 22);
+            this.sqlScriptPath.Size = new System.Drawing.Size(638, 20);
             this.sqlScriptPath.TabIndex = 1;
-            this.sqlScriptPath.Text = "C:\\src\\p7\\src\\P7\\Databases\\SDIMain";
             this.mainTooltip.SetToolTip(this.sqlScriptPath, "The top folder containing database project scripts. This folder and its decendent" +
         "s will be searched for *.sql files.");
             this.sqlScriptPath.Click += new System.EventHandler(this.sqlScriptPath_Click);
@@ -106,98 +108,103 @@
             // 
             // sqlServerConnectionString
             // 
-            this.sqlServerConnectionString.Location = new System.Drawing.Point(217, 69);
+            this.sqlServerConnectionString.Location = new System.Drawing.Point(163, 56);
+            this.sqlServerConnectionString.Margin = new System.Windows.Forms.Padding(2);
             this.sqlServerConnectionString.Name = "sqlServerConnectionString";
-            this.sqlServerConnectionString.Size = new System.Drawing.Size(850, 22);
+            this.sqlServerConnectionString.Size = new System.Drawing.Size(638, 20);
             this.sqlServerConnectionString.TabIndex = 3;
-            this.sqlServerConnectionString.Text = "Data Source=chaos;Integrated Security=False;User ID=webappuser;Password=pc4t6;Con" +
-    "nect Timeout=15;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=Read" +
-    "Write;MultiSubnetFailover=False";
             this.mainTooltip.SetToolTip(this.sqlServerConnectionString, "The SQL Server connection string for the database being examined.");
             this.sqlServerConnectionString.Click += new System.EventHandler(this.sqlServerConnectionString_Click);
             this.sqlServerConnectionString.TextChanged += new System.EventHandler(this.sqlServerConnectionString_TextChanged);
             // 
             // neo4jUrl
             // 
-            this.neo4jUrl.Location = new System.Drawing.Point(217, 99);
+            this.neo4jUrl.Location = new System.Drawing.Point(163, 80);
+            this.neo4jUrl.Margin = new System.Windows.Forms.Padding(2);
             this.neo4jUrl.Name = "neo4jUrl";
-            this.neo4jUrl.Size = new System.Drawing.Size(850, 22);
+            this.neo4jUrl.Size = new System.Drawing.Size(638, 20);
             this.neo4jUrl.TabIndex = 5;
-            this.neo4jUrl.Text = "bolt://localhost";
             this.mainTooltip.SetToolTip(this.neo4jUrl, "The URL to an instance of Neo4j.");
             this.neo4jUrl.TextChanged += new System.EventHandler(this.neo4jUrl_TextChanged);
             // 
             // neo4jUsername
             // 
-            this.neo4jUsername.Location = new System.Drawing.Point(217, 129);
+            this.neo4jUsername.Location = new System.Drawing.Point(163, 105);
+            this.neo4jUsername.Margin = new System.Windows.Forms.Padding(2);
             this.neo4jUsername.Name = "neo4jUsername";
-            this.neo4jUsername.Size = new System.Drawing.Size(170, 22);
+            this.neo4jUsername.Size = new System.Drawing.Size(128, 20);
             this.neo4jUsername.TabIndex = 6;
-            this.neo4jUsername.Text = "neo4j";
             this.mainTooltip.SetToolTip(this.neo4jUsername, "Your Neo4j username.");
             this.neo4jUsername.TextChanged += new System.EventHandler(this.neo4jUsername_TextChanged);
             // 
             // neo4jPassword
             // 
-            this.neo4jPassword.Location = new System.Drawing.Point(217, 158);
+            this.neo4jPassword.Location = new System.Drawing.Point(163, 128);
+            this.neo4jPassword.Margin = new System.Windows.Forms.Padding(2);
             this.neo4jPassword.Name = "neo4jPassword";
-            this.neo4jPassword.Size = new System.Drawing.Size(170, 22);
+            this.neo4jPassword.Size = new System.Drawing.Size(128, 20);
             this.neo4jPassword.TabIndex = 7;
-            this.neo4jPassword.Text = "schooldatebooks";
             this.mainTooltip.SetToolTip(this.neo4jPassword, "Your Neo4j password.");
             this.neo4jPassword.TextChanged += new System.EventHandler(this.neo4jPassword_TextChanged);
             // 
             // codePath
             // 
-            this.codePath.Location = new System.Drawing.Point(217, 12);
+            this.codePath.Location = new System.Drawing.Point(163, 10);
+            this.codePath.Margin = new System.Windows.Forms.Padding(2);
             this.codePath.Name = "codePath";
-            this.codePath.Size = new System.Drawing.Size(850, 22);
+            this.codePath.Size = new System.Drawing.Size(638, 20);
             this.codePath.TabIndex = 28;
-            this.codePath.Text = "C:\\src\\p7\\src\\P7";
             this.mainTooltip.SetToolTip(this.codePath, "The top folder containing project code. This folder and its decendents will be se" +
         "arched for *.vb, *.cs, *.ascx, *.aspx, *.asmx, files.");
+            this.codePath.TextChanged += new System.EventHandler(this.codePath_TextChanged);
             // 
             // sqlServerConnectionStringLabel
             // 
             this.sqlServerConnectionStringLabel.AutoSize = true;
-            this.sqlServerConnectionStringLabel.Location = new System.Drawing.Point(13, 72);
+            this.sqlServerConnectionStringLabel.Location = new System.Drawing.Point(10, 58);
+            this.sqlServerConnectionStringLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.sqlServerConnectionStringLabel.Name = "sqlServerConnectionStringLabel";
-            this.sqlServerConnectionStringLabel.Size = new System.Drawing.Size(198, 17);
+            this.sqlServerConnectionStringLabel.Size = new System.Drawing.Size(169, 15);
             this.sqlServerConnectionStringLabel.TabIndex = 2;
             this.sqlServerConnectionStringLabel.Text = "SQL Server Connection String";
             // 
             // neo4jUrlLabel
             // 
             this.neo4jUrlLabel.AutoSize = true;
-            this.neo4jUrlLabel.Location = new System.Drawing.Point(134, 102);
+            this.neo4jUrlLabel.Location = new System.Drawing.Point(100, 83);
+            this.neo4jUrlLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.neo4jUrlLabel.Name = "neo4jUrlLabel";
-            this.neo4jUrlLabel.Size = new System.Drawing.Size(77, 17);
+            this.neo4jUrlLabel.Size = new System.Drawing.Size(68, 15);
             this.neo4jUrlLabel.TabIndex = 4;
             this.neo4jUrlLabel.Text = "Neo4j URL";
             // 
             // neo4jUsernameLabel
             // 
             this.neo4jUsernameLabel.AutoSize = true;
-            this.neo4jUsernameLabel.Location = new System.Drawing.Point(97, 132);
+            this.neo4jUsernameLabel.Location = new System.Drawing.Point(73, 107);
+            this.neo4jUsernameLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.neo4jUsernameLabel.Name = "neo4jUsernameLabel";
-            this.neo4jUsernameLabel.Size = new System.Drawing.Size(114, 17);
+            this.neo4jUsernameLabel.Size = new System.Drawing.Size(101, 15);
             this.neo4jUsernameLabel.TabIndex = 8;
             this.neo4jUsernameLabel.Text = "Neo4j Username";
             // 
             // neo4jPasswordLabel
             // 
             this.neo4jPasswordLabel.AutoSize = true;
-            this.neo4jPasswordLabel.Location = new System.Drawing.Point(101, 161);
+            this.neo4jPasswordLabel.Location = new System.Drawing.Point(76, 131);
+            this.neo4jPasswordLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.neo4jPasswordLabel.Name = "neo4jPasswordLabel";
-            this.neo4jPasswordLabel.Size = new System.Drawing.Size(110, 17);
+            this.neo4jPasswordLabel.Size = new System.Drawing.Size(97, 15);
             this.neo4jPasswordLabel.TabIndex = 9;
             this.neo4jPasswordLabel.Text = "Neo4j Password";
             // 
             // compareLists
             // 
-            this.compareLists.Location = new System.Drawing.Point(16, 442);
+            this.compareLists.Enabled = false;
+            this.compareLists.Location = new System.Drawing.Point(12, 359);
+            this.compareLists.Margin = new System.Windows.Forms.Padding(2);
             this.compareLists.Name = "compareLists";
-            this.compareLists.Size = new System.Drawing.Size(1051, 27);
+            this.compareLists.Size = new System.Drawing.Size(788, 22);
             this.compareLists.TabIndex = 21;
             this.compareLists.Text = "Compare Lists";
             this.compareLists.UseVisualStyleBackColor = true;
@@ -206,9 +213,10 @@
             // getSQLServerReferences
             // 
             this.getSQLServerReferences.Enabled = false;
-            this.getSQLServerReferences.Location = new System.Drawing.Point(16, 749);
+            this.getSQLServerReferences.Location = new System.Drawing.Point(12, 609);
+            this.getSQLServerReferences.Margin = new System.Windows.Forms.Padding(2);
             this.getSQLServerReferences.Name = "getSQLServerReferences";
-            this.getSQLServerReferences.Size = new System.Drawing.Size(1051, 23);
+            this.getSQLServerReferences.Size = new System.Drawing.Size(788, 19);
             this.getSQLServerReferences.TabIndex = 23;
             this.getSQLServerReferences.Text = "Get SQL Server References";
             this.getSQLServerReferences.UseVisualStyleBackColor = true;
@@ -222,9 +230,10 @@
             this.columnHeader7,
             this.columnHeader3,
             this.columnHeader4});
-            this.referenceList.Location = new System.Drawing.Point(16, 520);
+            this.referenceList.Location = new System.Drawing.Point(11, 400);
+            this.referenceList.Margin = new System.Windows.Forms.Padding(2);
             this.referenceList.Name = "referenceList";
-            this.referenceList.Size = new System.Drawing.Size(1051, 191);
+            this.referenceList.Size = new System.Drawing.Size(789, 156);
             this.referenceList.TabIndex = 22;
             this.referenceList.UseCompatibleStateImageBehavior = false;
             this.referenceList.View = System.Windows.Forms.View.Details;
@@ -239,6 +248,11 @@
             this.columnHeader6.Text = "Type";
             this.columnHeader6.Width = 125;
             // 
+            // columnHeader7
+            // 
+            this.columnHeader7.Text = "Relationship";
+            this.columnHeader7.Width = 175;
+            // 
             // columnHeader3
             // 
             this.columnHeader3.Text = "Referencee";
@@ -252,9 +266,10 @@
             // writeToNeo4j
             // 
             this.writeToNeo4j.Enabled = false;
-            this.writeToNeo4j.Location = new System.Drawing.Point(16, 779);
+            this.writeToNeo4j.Location = new System.Drawing.Point(12, 633);
+            this.writeToNeo4j.Margin = new System.Windows.Forms.Padding(2);
             this.writeToNeo4j.Name = "writeToNeo4j";
-            this.writeToNeo4j.Size = new System.Drawing.Size(1051, 23);
+            this.writeToNeo4j.Size = new System.Drawing.Size(788, 19);
             this.writeToNeo4j.TabIndex = 25;
             this.writeToNeo4j.Text = "Write to Neo4j";
             this.writeToNeo4j.UseVisualStyleBackColor = true;
@@ -266,18 +281,20 @@
             this.sqlServerObjectPanel.Controls.Add(this.sqlServerObjectCount);
             this.sqlServerObjectPanel.Controls.Add(this.getSQLServerObjects);
             this.sqlServerObjectPanel.Controls.Add(this.sqlServerObjectList);
-            this.sqlServerObjectPanel.Location = new System.Drawing.Point(549, 186);
+            this.sqlServerObjectPanel.Location = new System.Drawing.Point(412, 151);
+            this.sqlServerObjectPanel.Margin = new System.Windows.Forms.Padding(2);
             this.sqlServerObjectPanel.Name = "sqlServerObjectPanel";
-            this.sqlServerObjectPanel.Size = new System.Drawing.Size(518, 250);
+            this.sqlServerObjectPanel.Size = new System.Drawing.Size(388, 203);
             this.sqlServerObjectPanel.TabIndex = 26;
             // 
             // sqlServerNotInScriptsCount
             // 
             this.sqlServerNotInScriptsCount.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.sqlServerNotInScriptsCount.Location = new System.Drawing.Point(367, 217);
+            this.sqlServerNotInScriptsCount.Location = new System.Drawing.Point(275, 176);
+            this.sqlServerNotInScriptsCount.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.sqlServerNotInScriptsCount.Name = "sqlServerNotInScriptsCount";
             this.sqlServerNotInScriptsCount.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.sqlServerNotInScriptsCount.Size = new System.Drawing.Size(148, 17);
+            this.sqlServerNotInScriptsCount.Size = new System.Drawing.Size(111, 14);
             this.sqlServerNotInScriptsCount.TabIndex = 22;
             this.sqlServerNotInScriptsCount.Text = "0 not in scripts";
             this.sqlServerNotInScriptsCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -286,18 +303,21 @@
             // sqlServerObjectCount
             // 
             this.sqlServerObjectCount.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.sqlServerObjectCount.Location = new System.Drawing.Point(367, 200);
+            this.sqlServerObjectCount.Location = new System.Drawing.Point(275, 162);
+            this.sqlServerObjectCount.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.sqlServerObjectCount.Name = "sqlServerObjectCount";
-            this.sqlServerObjectCount.Size = new System.Drawing.Size(148, 17);
+            this.sqlServerObjectCount.Size = new System.Drawing.Size(111, 14);
             this.sqlServerObjectCount.TabIndex = 21;
             this.sqlServerObjectCount.Text = "0 Objects";
             this.sqlServerObjectCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // getSQLServerObjects
             // 
-            this.getSQLServerObjects.Location = new System.Drawing.Point(180, 200);
+            this.getSQLServerObjects.Enabled = false;
+            this.getSQLServerObjects.Location = new System.Drawing.Point(135, 162);
+            this.getSQLServerObjects.Margin = new System.Windows.Forms.Padding(2);
             this.getSQLServerObjects.Name = "getSQLServerObjects";
-            this.getSQLServerObjects.Size = new System.Drawing.Size(181, 40);
+            this.getSQLServerObjects.Size = new System.Drawing.Size(136, 32);
             this.getSQLServerObjects.TabIndex = 17;
             this.getSQLServerObjects.Text = "Get SQL Server Objects";
             this.getSQLServerObjects.UseVisualStyleBackColor = true;
@@ -308,9 +328,10 @@
             this.sqlServerObjectList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
-            this.sqlServerObjectList.Location = new System.Drawing.Point(3, 3);
+            this.sqlServerObjectList.Location = new System.Drawing.Point(2, 2);
+            this.sqlServerObjectList.Margin = new System.Windows.Forms.Padding(2);
             this.sqlServerObjectList.Name = "sqlServerObjectList";
-            this.sqlServerObjectList.Size = new System.Drawing.Size(512, 191);
+            this.sqlServerObjectList.Size = new System.Drawing.Size(385, 156);
             this.sqlServerObjectList.TabIndex = 16;
             this.sqlServerObjectList.UseCompatibleStateImageBehavior = false;
             this.sqlServerObjectList.View = System.Windows.Forms.View.Details;
@@ -331,18 +352,20 @@
             this.sqlScriptObjectPanel.Controls.Add(this.sqlScriptObjectCount);
             this.sqlScriptObjectPanel.Controls.Add(this.getSQLScriptObjects);
             this.sqlScriptObjectPanel.Controls.Add(this.sqlScriptObjectList);
-            this.sqlScriptObjectPanel.Location = new System.Drawing.Point(16, 186);
+            this.sqlScriptObjectPanel.Location = new System.Drawing.Point(12, 151);
+            this.sqlScriptObjectPanel.Margin = new System.Windows.Forms.Padding(2);
             this.sqlScriptObjectPanel.Name = "sqlScriptObjectPanel";
-            this.sqlScriptObjectPanel.Size = new System.Drawing.Size(518, 250);
+            this.sqlScriptObjectPanel.Size = new System.Drawing.Size(388, 203);
             this.sqlScriptObjectPanel.TabIndex = 23;
             // 
             // sqlScriptNotOnServerCount
             // 
             this.sqlScriptNotOnServerCount.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.sqlScriptNotOnServerCount.Location = new System.Drawing.Point(367, 217);
+            this.sqlScriptNotOnServerCount.Location = new System.Drawing.Point(275, 176);
+            this.sqlScriptNotOnServerCount.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.sqlScriptNotOnServerCount.Name = "sqlScriptNotOnServerCount";
             this.sqlScriptNotOnServerCount.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.sqlScriptNotOnServerCount.Size = new System.Drawing.Size(148, 17);
+            this.sqlScriptNotOnServerCount.Size = new System.Drawing.Size(111, 14);
             this.sqlScriptNotOnServerCount.TabIndex = 21;
             this.sqlScriptNotOnServerCount.Text = "0 not on server";
             this.sqlScriptNotOnServerCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -351,19 +374,22 @@
             // sqlScriptObjectCount
             // 
             this.sqlScriptObjectCount.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.sqlScriptObjectCount.Location = new System.Drawing.Point(367, 200);
+            this.sqlScriptObjectCount.Location = new System.Drawing.Point(275, 162);
+            this.sqlScriptObjectCount.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.sqlScriptObjectCount.Name = "sqlScriptObjectCount";
             this.sqlScriptObjectCount.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.sqlScriptObjectCount.Size = new System.Drawing.Size(148, 17);
+            this.sqlScriptObjectCount.Size = new System.Drawing.Size(111, 14);
             this.sqlScriptObjectCount.TabIndex = 20;
             this.sqlScriptObjectCount.Text = "0 Objects";
             this.sqlScriptObjectCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // getSQLScriptObjects
             // 
-            this.getSQLScriptObjects.Location = new System.Drawing.Point(167, 200);
+            this.getSQLScriptObjects.Enabled = false;
+            this.getSQLScriptObjects.Location = new System.Drawing.Point(125, 162);
+            this.getSQLScriptObjects.Margin = new System.Windows.Forms.Padding(2);
             this.getSQLScriptObjects.Name = "getSQLScriptObjects";
-            this.getSQLScriptObjects.Size = new System.Drawing.Size(181, 40);
+            this.getSQLScriptObjects.Size = new System.Drawing.Size(136, 32);
             this.getSQLScriptObjects.TabIndex = 16;
             this.getSQLScriptObjects.Text = "Get SQL Script Objects";
             this.getSQLScriptObjects.UseVisualStyleBackColor = true;
@@ -374,9 +400,10 @@
             this.sqlScriptObjectList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.ScriptName,
             this.ScriptType});
-            this.sqlScriptObjectList.Location = new System.Drawing.Point(3, 3);
+            this.sqlScriptObjectList.Location = new System.Drawing.Point(2, 2);
+            this.sqlScriptObjectList.Margin = new System.Windows.Forms.Padding(2);
             this.sqlScriptObjectList.Name = "sqlScriptObjectList";
-            this.sqlScriptObjectList.Size = new System.Drawing.Size(512, 191);
+            this.sqlScriptObjectList.Size = new System.Drawing.Size(385, 156);
             this.sqlScriptObjectList.TabIndex = 14;
             this.sqlScriptObjectList.UseCompatibleStateImageBehavior = false;
             this.sqlScriptObjectList.View = System.Windows.Forms.View.Details;
@@ -394,33 +421,42 @@
             // codePathLabel
             // 
             this.codePathLabel.AutoSize = true;
-            this.codePathLabel.Location = new System.Drawing.Point(134, 15);
+            this.codePathLabel.Location = new System.Drawing.Point(100, 12);
+            this.codePathLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.codePathLabel.Name = "codePathLabel";
-            this.codePathLabel.Size = new System.Drawing.Size(74, 17);
+            this.codePathLabel.Size = new System.Drawing.Size(64, 15);
             this.codePathLabel.TabIndex = 27;
             this.codePathLabel.Text = "Code Path";
             // 
             // getCodeReferencesToSqlServerObjects
             // 
             this.getCodeReferencesToSqlServerObjects.Enabled = false;
-            this.getCodeReferencesToSqlServerObjects.Location = new System.Drawing.Point(16, 717);
+            this.getCodeReferencesToSqlServerObjects.Location = new System.Drawing.Point(12, 583);
+            this.getCodeReferencesToSqlServerObjects.Margin = new System.Windows.Forms.Padding(2);
             this.getCodeReferencesToSqlServerObjects.Name = "getCodeReferencesToSqlServerObjects";
-            this.getCodeReferencesToSqlServerObjects.Size = new System.Drawing.Size(1051, 23);
+            this.getCodeReferencesToSqlServerObjects.Size = new System.Drawing.Size(788, 19);
             this.getCodeReferencesToSqlServerObjects.TabIndex = 29;
             this.getCodeReferencesToSqlServerObjects.Text = "Get Code References To SQL Server Objects";
             this.getCodeReferencesToSqlServerObjects.UseVisualStyleBackColor = true;
             this.getCodeReferencesToSqlServerObjects.Click += new System.EventHandler(this.getCodeReferencesToSqlServerObjects_Click);
             // 
-            // columnHeader7
+            // clearReferenceList
             // 
-            this.columnHeader7.Text = "Relationship";
-            this.columnHeader7.Width = 175;
+            this.clearReferenceList.Location = new System.Drawing.Point(12, 560);
+            this.clearReferenceList.Margin = new System.Windows.Forms.Padding(2);
+            this.clearReferenceList.Name = "clearReferenceList";
+            this.clearReferenceList.Size = new System.Drawing.Size(788, 19);
+            this.clearReferenceList.TabIndex = 30;
+            this.clearReferenceList.Text = "Clear List";
+            this.clearReferenceList.UseVisualStyleBackColor = true;
+            this.clearReferenceList.Click += new System.EventHandler(this.clearReferenceList_Click);
             // 
             // main
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1079, 812);
+            this.ClientSize = new System.Drawing.Size(809, 660);
+            this.Controls.Add(this.clearReferenceList);
             this.Controls.Add(this.getCodeReferencesToSqlServerObjects);
             this.Controls.Add(this.codePath);
             this.Controls.Add(this.codePathLabel);
@@ -440,8 +476,10 @@
             this.Controls.Add(this.sqlServerConnectionStringLabel);
             this.Controls.Add(this.sqlScriptPath);
             this.Controls.Add(this.sqlScriptPathLabel);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "main";
             this.Text = "GraphMyDB";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.main_FormClosing);
             this.sqlServerObjectPanel.ResumeLayout(false);
             this.sqlScriptObjectPanel.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -489,6 +527,7 @@
         private System.Windows.Forms.Label codePathLabel;
         private System.Windows.Forms.Button getCodeReferencesToSqlServerObjects;
         private System.Windows.Forms.ColumnHeader columnHeader7;
+        private System.Windows.Forms.Button clearReferenceList;
     }
 }
 

@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigService.cs" />
     <Compile Include="main.cs">
       <SubType>Form</SubType>
     </Compile>
