@@ -28,7 +28,7 @@ namespace DBUsageInspector
                 {
                     foreach (ReferenceObject sqlObject in sqlObjects)
                     {
-                        session.Run("CREATE (a:" + sqlObject.Type.ToUpper() + " {name:'" + sqlObject.Name.Replace("\\", "\\\\") + "'})");
+                        session.Run("CREATE (a:" + sqlObject.Type.ToUpper() + " {name:'" + sqlObject.Name.Replace("\\", "\\\\") + "', schema:'" + sqlObject.Schema.Replace("\\", "\\\\") + "'})");
                     }
                 }
             }

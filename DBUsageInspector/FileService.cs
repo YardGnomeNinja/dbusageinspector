@@ -43,7 +43,7 @@ namespace DBUsageInspector
                 string fileContent = originalFile.OpenText().ReadToEnd();
                 string cleanContent = ParsingService.Normalize(fileContent, originalFile.Extension);
 
-                foreach (KeyValuePair<ReferenceObject, ReferenceObject> objectPair in ParsingService.GetReferences(originalFile.FullName, "CODE", cleanContent, sqlServerObjects))
+                foreach (KeyValuePair<ReferenceObject, ReferenceObject> objectPair in ParsingService.GetReferences(originalFile.FullName, "CODE", string.Empty, cleanContent, sqlServerObjects))
                 {
                     returnValue.Add(objectPair.Key, objectPair.Value);
                 }

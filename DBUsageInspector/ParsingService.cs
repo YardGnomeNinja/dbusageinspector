@@ -6,7 +6,7 @@ namespace DBUsageInspector
 {
     public static class ParsingService
     {
-        public static IDictionary<ReferenceObject, ReferenceObject> GetReferences(string referencerName, string referencerType, string referencerContent, IList<ReferenceObject> sqlServerObjects)
+        public static IDictionary<ReferenceObject, ReferenceObject> GetReferences(string referencerName, string referencerType, string referencerSchema, string referencerContent, IList<ReferenceObject> sqlServerObjects)
         {
             IDictionary<ReferenceObject, ReferenceObject> returnValue = new Dictionary<ReferenceObject, ReferenceObject>();
 
@@ -24,7 +24,7 @@ namespace DBUsageInspector
             {
                 if (referencerContent.Contains(item.Name)) // "Is there any reason to look closer?" check
                 {
-                    Regex itemName = new Regex(@"(FROM|JOIN|INTO|UPDATE|DELETE FROM)?\s" + item.Name + @"\s");
+                    Regex itemName = new Regex(@"(FROM|JOIN|INTO|UPDATE|DELETE FROM)?\s?\(?\s?\[?\s?(\w+\.)?" + item.Name + @"\s?\]?\s?\)?""?");
 
                     MatchCollection references = itemName.Matches(referencerContent);
 
@@ -39,22 +39,22 @@ namespace DBUsageInspector
                                 {
                                     string sqlStatement = reference.Groups[1].ToString();
 
-                                    returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes[sqlStatement]), new ReferenceObject(item.Name, item.Type, string.Empty));
+                                    returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes[sqlStatement], referencerSchema), new ReferenceObject(item.Name, item.Type, string.Empty, item.Schema));
                                 }
                             }
                         }
                         else if (item.Type == "PROCEDURE")
                         {
-                            returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes["EXECUTE"]), new ReferenceObject(item.Name, item.Type, string.Empty));
+                            returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes["EXECUTE"], referencerSchema), new ReferenceObject(item.Name, item.Type, string.Empty, item.Schema));
                         }
                         else if (item.Type == "FUNCTION")
                         {
-                            returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes["CALL"]), new ReferenceObject(item.Name, item.Type, string.Empty));
+                            returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes["CALL"], referencerSchema), new ReferenceObject(item.Name, item.Type, string.Empty, item.Schema));
                         }
                         else
                         {
                             // Default any referenced object not defined above
-                            returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes["REFERENCES"]), new ReferenceObject(item.Name, item.Type, string.Empty));
+                            returnValue.Add(new ReferenceObject(referencerName, referencerType, relationshipTypes["REFERENCES"], referencerSchema), new ReferenceObject(item.Name, item.Type, string.Empty, item.Schema));
                         }
                     }
                 }

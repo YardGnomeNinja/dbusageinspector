@@ -121,10 +121,11 @@ namespace DBUsageInspector
 
             foreach (ReferenceObject referenceObject in sqlScriptFileService.GetSqlScriptObjects())
             {
-                string[] item = new string[2];
+                string[] item = new string[3];
 
-                item[0] = referenceObject.Name;
-                item[1] = referenceObject.Type;
+                item[0] = referenceObject.Schema;
+                item[1] = referenceObject.Name;
+                item[2] = referenceObject.Type;
 
                 sqlScriptObjectList.Items.Add(new ListViewItem(item));
             }
@@ -143,10 +144,11 @@ namespace DBUsageInspector
 
             foreach (ReferenceObject referenceObject in sqlServerService.GetObjects())
             {
-                string[] item = new string[2];
+                string[] item = new string[3];
 
-                item[0] = referenceObject.Name;
-                item[1] = referenceObject.Type;
+                item[0] = referenceObject.Schema;
+                item[1] = referenceObject.Name;
+                item[2] = referenceObject.Type;
 
                 sqlServerObjectList.Items.Add(new ListViewItem(item));
             }
@@ -195,13 +197,15 @@ namespace DBUsageInspector
 
             foreach (KeyValuePair<ReferenceObject, ReferenceObject> reference in fileService.LoadReferenceObjects())
             {
-                string[] item = new string[5];
+                string[] item = new string[7];
 
-                item[0] = reference.Key.Name;
-                item[1] = reference.Key.Type;
-                item[2] = reference.Key.Relationship;
-                item[3] = reference.Value.Name;
-                item[4] = reference.Value.Type;
+                item[0] = reference.Key.Schema;
+                item[1] = reference.Key.Name;
+                item[2] = reference.Key.Type;
+                item[3] = reference.Key.Relationship;
+                item[4] = reference.Value.Schema;
+                item[5] = reference.Value.Name;
+                item[6] = reference.Value.Type;
 
                 referenceList.Items.Add(new ListViewItem(item));
             }
@@ -245,7 +249,7 @@ namespace DBUsageInspector
 
             foreach (ListViewItem item in sqlServerObjectList.Items)
             {
-                sqlServerObjects.Add(new ReferenceObject(item.SubItems[0].Text, item.SubItems[1].Text, string.Empty));
+                sqlServerObjects.Add(new ReferenceObject(item.SubItems[1].Text, item.SubItems[2].Text, string.Empty, item.SubItems[0].Text));
             }
 
             // Determine the type of references we are retrieving
@@ -262,13 +266,15 @@ namespace DBUsageInspector
 
             foreach (KeyValuePair<ReferenceObject, ReferenceObject> reference in references)
             {
-                string[] item = new string[5];
+                string[] item = new string[7];
 
-                item[0] = reference.Key.Name;
-                item[1] = reference.Key.Type;
-                item[2] = reference.Key.Relationship;
-                item[3] = reference.Value.Name;
-                item[4] = reference.Value.Type;
+                item[0] = reference.Key.Schema;
+                item[1] = reference.Key.Name;
+                item[2] = reference.Key.Type;
+                item[3] = reference.Key.Relationship;
+                item[4] = reference.Value.Schema;
+                item[5] = reference.Value.Name;
+                item[6] = reference.Value.Type;
 
                 referenceList.Items.Add(new ListViewItem(item));
             }
@@ -353,54 +359,53 @@ namespace DBUsageInspector
         {
             DateTime startTime = DateTime.Now;
 
-            List<ReferenceObject> newReferenceObjects = new List<ReferenceObject>();
+            List<ReferenceObject> nodes = new List<ReferenceObject>();
 
             // Add CODE nodes (Only those with references are necessary)
             foreach (ListViewItem item in referenceList.Items)
             {
-                if (item.SubItems[1].Text == "CODE")
+                if (item.SubItems[2].Text == "CODE")
                 {
-                    bool addNewReferenceObject = true;
-                    ReferenceObject newReferenceObject = new ReferenceObject(item.SubItems[0].Text, item.SubItems[1].Text, item.SubItems[2].Text);
+                    bool addNewNode = true;
+                    ReferenceObject newNode = new ReferenceObject(item.SubItems[1].Text, item.SubItems[2].Text, item.SubItems[3].Text, item.SubItems[0].Text);
 
-                    foreach (ReferenceObject existingObject in newReferenceObjects)
+                    foreach (ReferenceObject existingNode in nodes)
                     {
-                        if (existingObject.Name == newReferenceObject.Name) // only add the reference object once to avoid duplicates
+                        if (existingNode.Name == newNode.Name) // only add the reference object once to avoid duplicates
                         {
-                            addNewReferenceObject = false;
+                            addNewNode = false;
                             break;
                         }
                     }
 
-                    if (addNewReferenceObject)
-                        newReferenceObjects.Add(newReferenceObject);
+                    if (addNewNode)
+                        nodes.Add(newNode);
                 }
             }
 
             // Add SQL Server Objects (All existing objects on SQL Server are necessary)
             foreach (ListViewItem item in sqlServerObjectList.Items)
             {
-                newReferenceObjects.Add(new ReferenceObject(item.SubItems[0].Text, item.SubItems[1].Text, string.Empty));
+                nodes.Add(new ReferenceObject(item.SubItems[1].Text, item.SubItems[2].Text, string.Empty, item.SubItems[0].Text));
             }
 
-            neo4jService.CreateObjects(newReferenceObjects);
-
             // Create Relationships
-            Dictionary<ReferenceObject, ReferenceObject> referenceObjects = new Dictionary<ReferenceObject, ReferenceObject>();
+            Dictionary<ReferenceObject, ReferenceObject> relationships = new Dictionary<ReferenceObject, ReferenceObject>();
 
             foreach (ListViewItem item in referenceList.Items)
             {
-                ReferenceObject referrer = new ReferenceObject(item.SubItems[0].Text, item.SubItems[1].Text, item.SubItems[2].Text);
-                ReferenceObject referree = new ReferenceObject(item.SubItems[3].Text, item.SubItems[4].Text, string.Empty);
+                ReferenceObject referrer = new ReferenceObject(item.SubItems[1].Text, item.SubItems[2].Text, item.SubItems[3].Text, item.SubItems[0].Text);
+                ReferenceObject referree = new ReferenceObject(item.SubItems[5].Text, item.SubItems[6].Text, string.Empty, item.SubItems[4].Text);
 
-                referenceObjects.Add(referrer, referree);
+                relationships.Add(referrer, referree);
             }
 
             // Before sending everything to Neo4j, save a file containing the references
             FileService fileService = new FileService("./", new HashSet<string>());
-            fileService.SaveReferenceObjects(referenceObjects);
+            fileService.SaveReferenceObjects(relationships);
 
-            neo4jService.CreateRelationships(referenceObjects);
+            neo4jService.CreateObjects(nodes);
+            neo4jService.CreateRelationships(relationships);
 
             DateTime endTime = DateTime.Now;
             TimeSpan timeSpan = (endTime - startTime);

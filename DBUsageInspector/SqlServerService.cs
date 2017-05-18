@@ -22,6 +22,7 @@ namespace DBUsageInspector
             List<ReferenceObject> returnValue = new List<ReferenceObject>();
 
             string query = "SELECT DISTINCT " +
+                            "   SCHEMA_NAME(schema_id) AS [Schema], " +
                             "   Name, " +
                             "   CASE type_desc " +
                             "        WHEN 'SQL_INLINE_TABLE_VALUED_FUNCTION' THEN 'FUNCTION' " +
@@ -56,7 +57,7 @@ namespace DBUsageInspector
 
                     while (dataReader.Read())
                     {
-                        returnValue.Add(new ReferenceObject(dataReader["Name"].ToString(), dataReader["Type"].ToString(), string.Empty));
+                        returnValue.Add(new ReferenceObject(dataReader["Name"].ToString(), dataReader["Type"].ToString(), string.Empty, dataReader["Schema"].ToString()));
                     }
                 }
             }
@@ -69,6 +70,7 @@ namespace DBUsageInspector
             IDictionary<ReferenceObject, ReferenceObject> returnValue = new Dictionary<ReferenceObject, ReferenceObject>();
 
             string query = "SELECT " +
+                            "   SCHEMA_NAME(schema_id) AS [Schema], " +
                             "   sys.objects.name AS [ObjectName], " +
                             "   CASE sys.objects.type_desc " +
                             "       WHEN 'SQL_INLINE_TABLE_VALUED_FUNCTION' THEN 'FUNCTION' " +
@@ -85,7 +87,7 @@ namespace DBUsageInspector
                             "   sys.objects " +
                             "   INNER JOIN sys.sql_modules ON sys.sql_modules.object_id = sys.objects.object_id ";
 
-            List<Tuple<string, string, string>> sqlObjects = new List<Tuple<string, string, string>>();
+            List<Tuple<string, string, string, string>> sqlObjects = new List<Tuple<string, string, string, string>>();
 
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
@@ -100,18 +102,19 @@ namespace DBUsageInspector
                     {
                         string objectName = dataReader["ObjectName"].ToString();
                         string objectType = dataReader["ObjectType"].ToString();
+                        string objectSchema = dataReader["Schema"].ToString();
                         string objectDefinition = dataReader["ObjectDefinition"].ToString();
 
                         string cleanContent = ParsingService.Normalize(objectDefinition, ".sql");
 
-                        sqlObjects.Add(new Tuple<string, string, string>(objectName, objectType, cleanContent));
+                        sqlObjects.Add(new Tuple<string, string, string, string>(objectName, objectType, objectSchema, cleanContent));
                     }
                 }
             }
 
-            foreach (Tuple<string, string, string> sqlObject in sqlObjects)
+            foreach (Tuple<string, string, string, string> sqlObject in sqlObjects)
             {
-                foreach (KeyValuePair<ReferenceObject, ReferenceObject> objectPair in ParsingService.GetReferences(sqlObject.Item1, sqlObject.Item2, sqlObject.Item3, sqlServerObjects))
+                foreach (KeyValuePair<ReferenceObject, ReferenceObject> objectPair in ParsingService.GetReferences(sqlObject.Item1, sqlObject.Item2, sqlObject.Item3, sqlObject.Item4, sqlServerObjects))
                 {
                     returnValue.Add(objectPair.Key, objectPair.Value);
                 }
