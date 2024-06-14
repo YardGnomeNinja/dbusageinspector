@@ -165,5 +165,31 @@ namespace DBUsageInspector
 
             return returnValue;
         }
+
+        public TextWriter CreateCommandLog()
+        {
+            FileInfo file = new FileInfo("./commands.log");
+
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+            return file.CreateText();
+        }
+
+        public void WriteToCommandLog(TextWriter textWriter, string command)
+        {
+            textWriter.WriteLine(command);
+            //FileInfo file = new FileInfo("./commands.log");
+
+            //if (file.Exists)
+            //{
+            //    using (TextWriter textWriter = file.AppendText())
+            //    {
+            //        textWriter.WriteLine(command);
+            //    }
+            //}
+        }
     }
 }

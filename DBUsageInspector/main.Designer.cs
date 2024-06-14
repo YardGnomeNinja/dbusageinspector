@@ -50,6 +50,8 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.writeToNeo4j = new System.Windows.Forms.Button();
             this.sqlServerObjectPanel = new System.Windows.Forms.Panel();
             this.sqlServerNotInScriptsCount = new System.Windows.Forms.Label();
@@ -58,6 +60,7 @@
             this.sqlServerObjectList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.sqlScriptObjectPanel = new System.Windows.Forms.Panel();
             this.sqlScriptNotOnServerCount = new System.Windows.Forms.Label();
             this.sqlScriptObjectCount = new System.Windows.Forms.Label();
@@ -68,9 +71,6 @@
             this.codePathLabel = new System.Windows.Forms.Label();
             this.getCodeReferencesToSqlServerObjects = new System.Windows.Forms.Button();
             this.clearReferenceList = new System.Windows.Forms.Button();
-            this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.sqlServerObjectPanel.SuspendLayout();
             this.sqlScriptObjectPanel.SuspendLayout();
             this.SuspendLayout();
@@ -85,7 +85,7 @@
             this.sqlScriptPathLabel.AutoSize = true;
             this.sqlScriptPathLabel.Location = new System.Drawing.Point(101, 44);
             this.sqlScriptPathLabel.Name = "sqlScriptPathLabel";
-            this.sqlScriptPathLabel.Size = new System.Drawing.Size(109, 17);
+            this.sqlScriptPathLabel.Size = new System.Drawing.Size(100, 16);
             this.sqlScriptPathLabel.TabIndex = 0;
             this.sqlScriptPathLabel.Text = "SQL Script Path";
             // 
@@ -166,7 +166,7 @@
             this.sqlServerConnectionStringLabel.AutoSize = true;
             this.sqlServerConnectionStringLabel.Location = new System.Drawing.Point(13, 71);
             this.sqlServerConnectionStringLabel.Name = "sqlServerConnectionStringLabel";
-            this.sqlServerConnectionStringLabel.Size = new System.Drawing.Size(198, 17);
+            this.sqlServerConnectionStringLabel.Size = new System.Drawing.Size(183, 16);
             this.sqlServerConnectionStringLabel.TabIndex = 2;
             this.sqlServerConnectionStringLabel.Text = "SQL Server Connection String";
             // 
@@ -175,7 +175,7 @@
             this.neo4jUrlLabel.AutoSize = true;
             this.neo4jUrlLabel.Location = new System.Drawing.Point(133, 102);
             this.neo4jUrlLabel.Name = "neo4jUrlLabel";
-            this.neo4jUrlLabel.Size = new System.Drawing.Size(77, 17);
+            this.neo4jUrlLabel.Size = new System.Drawing.Size(73, 16);
             this.neo4jUrlLabel.TabIndex = 4;
             this.neo4jUrlLabel.Text = "Neo4j URL";
             // 
@@ -184,7 +184,7 @@
             this.neo4jUsernameLabel.AutoSize = true;
             this.neo4jUsernameLabel.Location = new System.Drawing.Point(97, 132);
             this.neo4jUsernameLabel.Name = "neo4jUsernameLabel";
-            this.neo4jUsernameLabel.Size = new System.Drawing.Size(114, 17);
+            this.neo4jUsernameLabel.Size = new System.Drawing.Size(109, 16);
             this.neo4jUsernameLabel.TabIndex = 8;
             this.neo4jUsernameLabel.Text = "Neo4j Username";
             // 
@@ -193,7 +193,7 @@
             this.neo4jPasswordLabel.AutoSize = true;
             this.neo4jPasswordLabel.Location = new System.Drawing.Point(101, 161);
             this.neo4jPasswordLabel.Name = "neo4jPasswordLabel";
-            this.neo4jPasswordLabel.Size = new System.Drawing.Size(110, 17);
+            this.neo4jPasswordLabel.Size = new System.Drawing.Size(106, 16);
             this.neo4jPasswordLabel.TabIndex = 9;
             this.neo4jPasswordLabel.Text = "Neo4j Password";
             // 
@@ -231,6 +231,7 @@
             this.columnHeader4,
             this.columnHeader8,
             this.columnHeader9});
+            this.referenceList.HideSelection = false;
             this.referenceList.Location = new System.Drawing.Point(15, 492);
             this.referenceList.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.referenceList.Name = "referenceList";
@@ -264,9 +265,18 @@
             this.columnHeader4.Text = "Schema";
             this.columnHeader4.Width = 100;
             // 
+            // columnHeader8
+            // 
+            this.columnHeader8.Text = "Referencee";
+            this.columnHeader8.Width = 200;
+            // 
+            // columnHeader9
+            // 
+            this.columnHeader9.Text = "Type";
+            this.columnHeader9.Width = 120;
+            // 
             // writeToNeo4j
             // 
-            this.writeToNeo4j.Enabled = false;
             this.writeToNeo4j.Location = new System.Drawing.Point(16, 779);
             this.writeToNeo4j.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.writeToNeo4j.Name = "writeToNeo4j";
@@ -328,6 +338,7 @@
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader10});
+            this.sqlServerObjectList.HideSelection = false;
             this.sqlServerObjectList.Location = new System.Drawing.Point(3, 2);
             this.sqlServerObjectList.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.sqlServerObjectList.Name = "sqlServerObjectList";
@@ -345,6 +356,11 @@
             // 
             this.columnHeader2.Text = "Name";
             this.columnHeader2.Width = 200;
+            // 
+            // columnHeader10
+            // 
+            this.columnHeader10.Text = "Type";
+            this.columnHeader10.Width = 150;
             // 
             // sqlScriptObjectPanel
             // 
@@ -398,6 +414,7 @@
             this.sqlScriptObjectList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.ScriptName,
             this.ScriptType});
+            this.sqlScriptObjectList.HideSelection = false;
             this.sqlScriptObjectList.Location = new System.Drawing.Point(3, 2);
             this.sqlScriptObjectList.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.sqlScriptObjectList.Name = "sqlScriptObjectList";
@@ -421,7 +438,7 @@
             this.codePathLabel.AutoSize = true;
             this.codePathLabel.Location = new System.Drawing.Point(133, 15);
             this.codePathLabel.Name = "codePathLabel";
-            this.codePathLabel.Size = new System.Drawing.Size(74, 17);
+            this.codePathLabel.Size = new System.Drawing.Size(70, 16);
             this.codePathLabel.TabIndex = 27;
             this.codePathLabel.Text = "Code Path";
             // 
@@ -447,21 +464,6 @@
             this.clearReferenceList.Text = "Clear List";
             this.clearReferenceList.UseVisualStyleBackColor = true;
             this.clearReferenceList.Click += new System.EventHandler(this.clearReferenceList_Click);
-            // 
-            // columnHeader8
-            // 
-            this.columnHeader8.Text = "Referencee";
-            this.columnHeader8.Width = 200;
-            // 
-            // columnHeader9
-            // 
-            this.columnHeader9.Text = "Type";
-            this.columnHeader9.Width = 120;
-            // 
-            // columnHeader10
-            // 
-            this.columnHeader10.Text = "Type";
-            this.columnHeader10.Width = 150;
             // 
             // main
             // 

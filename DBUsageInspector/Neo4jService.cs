@@ -1,5 +1,6 @@
-﻿using Neo4j.Driver.V1;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace DBUsageInspector
 {
@@ -9,8 +10,11 @@ namespace DBUsageInspector
         public string Url;
         public string Username;
 
-        public Neo4jService()
+        FileService _fileService;
+
+        public Neo4jService(FileService fileService)
         {
+            _fileService = fileService;
         }
 
         public Neo4jService(string url, string username, string password)
@@ -20,36 +24,69 @@ namespace DBUsageInspector
             Password = password;
         }
 
-        public void CreateObjects(IEnumerable<ReferenceObject> sqlObjects)
+        public async Task<bool> CreateObjects(IEnumerable<ReferenceObject> sqlObjects, TextWriter logWriter)
         {
-            using (var driver = GraphDatabase.Driver(Url, AuthTokens.Basic(Username, Password)))
+            using (var driver = Neo4j.Driver.GraphDatabase.Driver(Url, Neo4j.Driver.AuthTokens.Basic(Username, Password)))
             {
-                using (var session = driver.Session())
+                using (var session = driver.AsyncSession())
                 {
                     foreach (ReferenceObject sqlObject in sqlObjects)
                     {
-                        session.Run("CREATE (a:" + sqlObject.Type.ToUpper() + " {name:'" + sqlObject.Name.Replace("\\", "\\\\") + "', schema:'" + sqlObject.Schema.Replace("\\", "\\\\") + "'})");
+                        //session.ExecuteWriteAsync("CREATE (a:" + sqlObject.Type.ToUpper() + " {name:'" + sqlObject.Name.Replace("\\", "\\\\") + "', schema:'" + sqlObject.Schema.Replace("\\", "\\\\") + "'})");
+                        await session.ExecuteWriteAsync(
+                            tx =>
+                            {
+                                var command = "CREATE (a:" + sqlObject.Type.ToUpper() +
+                                    " {name:'" + sqlObject.Name.Replace("\\", "\\\\") +
+                                    "', schema:'" + sqlObject.Schema.Replace("\\", "\\\\") + "'})";
+
+                                logWriter.WriteLine(command);
+
+                                var result = tx.RunAsync(command);
+
+                                return result;
+                            });
                     }
                 }
             }
+
+            return true;
         }
 
-        public void CreateRelationships(IDictionary<ReferenceObject, ReferenceObject> references)
+        public async Task<bool> CreateRelationships(IDictionary<ReferenceObject, ReferenceObject> references, TextWriter logWriter)
         {
             string query = string.Empty;
 
-            using (var driver = GraphDatabase.Driver(Url, AuthTokens.Basic(Username, Password)))
+            using (var driver = Neo4j.Driver.GraphDatabase.Driver(Url, Neo4j.Driver.AuthTokens.Basic(Username, Password)))
             {
-                using (var session = driver.Session())
+                using (var session = driver.AsyncSession())
                 {
                     foreach (KeyValuePair<ReferenceObject, ReferenceObject> reference in references)
                     {
+                        //string relationship = (reference.Key.Relationship == string.Empty ? "REFERENCES" : reference.Key.Relationship); // If no relationship is defined, default to "REFERENCES"
+                        //query = "MATCH (a:" + reference.Key.Type + "), (b:" + reference.Value.Type + ") WHERE a.name =~ '" + reference.Key.Name.Replace("\\", "\\\\\\\\") + "' AND b.name =~ '" + reference.Value.Name.Replace("\\", "\\\\\\\\") + "' CREATE (a)-[:" + relationship + "]->(b)";
+                        //session.Run(query);
                         string relationship = (reference.Key.Relationship == string.Empty ? "REFERENCES" : reference.Key.Relationship); // If no relationship is defined, default to "REFERENCES"
-                        query = "MATCH (a:" + reference.Key.Type + "), (b:" + reference.Value.Type + ") WHERE a.name =~ '" + reference.Key.Name.Replace("\\", "\\\\\\\\") + "' AND b.name =~ '" + reference.Value.Name.Replace("\\", "\\\\\\\\") + "' CREATE (a)-[:" + relationship + "]->(b)";
-                        session.Run(query);
+
+                        await session.ExecuteWriteAsync(
+                            tx =>
+                            {
+                                var command = "MATCH (a:" + reference.Key.Type +
+                                    "), (b:" + reference.Value.Type + ") WHERE a.name =~ '" + reference.Key.Name.Replace("\\", "\\\\\\\\") +
+                                    "' AND b.name =~ '" + reference.Value.Name.Replace("\\", "\\\\\\\\") + "' CREATE (a)-[:" + relationship + "]->(b)";
+
+                                logWriter.WriteLine(command);
+
+                                var result = tx.RunAsync(command);
+
+                                return result;
+                            });
                     }
+
                 }
             }
+
+            return true;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DBUsageInspector
@@ -20,7 +21,7 @@ namespace DBUsageInspector
             codeFileService = new FileService();
             sqlScriptFileService = new FileService();
             sqlServerService = new SqlServerService();
-            neo4jService = new Neo4jService();
+            neo4jService = new Neo4jService(codeFileService);
 
             LoadConfig();
 
@@ -31,7 +32,6 @@ namespace DBUsageInspector
         private void clearReferenceList_Click(object sender, EventArgs e)
         {
             referenceList.Items.Clear();
-            writeToNeo4j.Enabled = false;
         }
 
         private void codePath_Click(object sender, EventArgs e)
@@ -69,7 +69,7 @@ namespace DBUsageInspector
 
                 foreach (ListViewItem sqlServerObject in sqlServerObjectList.Items)
                 {
-                    if (sqlScriptObject.Text == sqlServerObject.Text)
+                    if (sqlScriptObject.Text == sqlServerObject.SubItems[1].Text)
                     {
                         matchFound = true;
                         break;
@@ -90,7 +90,7 @@ namespace DBUsageInspector
 
                 foreach (ListViewItem sqlScriptObject in sqlServerObjectList.Items)
                 {
-                    if (sqlServerObject.Text == sqlScriptObject.Text)
+                    if (sqlServerObject.SubItems[1].Text == sqlScriptObject.SubItems[1].Text)
                     {
                         matchFound = true;
                         break;
@@ -123,9 +123,9 @@ namespace DBUsageInspector
             {
                 string[] item = new string[3];
 
-                item[0] = referenceObject.Schema;
-                item[1] = referenceObject.Name;
-                item[2] = referenceObject.Type;
+                //item[0] = referenceObject.Schema;
+                item[0] = referenceObject.Name;
+                item[1] = referenceObject.Type;
 
                 sqlScriptObjectList.Items.Add(new ListViewItem(item));
             }
@@ -209,11 +209,6 @@ namespace DBUsageInspector
 
                 referenceList.Items.Add(new ListViewItem(item));
             }
-
-            if (referenceList.Items.Count > 0)
-            {
-                writeToNeo4j.Enabled = true;
-            }
         }
 
         private void main_FormClosing(object sender, FormClosingEventArgs e)
@@ -280,11 +275,6 @@ namespace DBUsageInspector
             }
 
             referenceList.Text = referenceList.Items.Count + " Objects";
-
-            if (referenceList.Items.Count > 0)
-            {
-                writeToNeo4j.Enabled = true;
-            }
 
             DateTime endTime = DateTime.Now;
             TimeSpan timeSpan = (endTime - startTime);
@@ -355,8 +345,14 @@ namespace DBUsageInspector
             }
         }
 
-        private void writeToNeo4j_Click(object sender, EventArgs e)
+        private async void writeToNeo4j_Click(object sender, EventArgs e)
         {
+            if (sqlServerObjectList.Items.Count == 0)
+            {
+                MessageBox.Show("You must click 'Get SQL Server Objects' before you can write to Neo4j");
+                return;
+            }
+
             DateTime startTime = DateTime.Now;
 
             List<ReferenceObject> nodes = new List<ReferenceObject>();
@@ -400,12 +396,16 @@ namespace DBUsageInspector
                 relationships.Add(referrer, referree);
             }
 
-            // Before sending everything to Neo4j, save a file containing the references
+            // Before sending everything to Neo4j, save a file containing the references and a log file for commands
             FileService fileService = new FileService("./", new HashSet<string>());
             fileService.SaveReferenceObjects(relationships);
+            
+            var logWriter = fileService.CreateCommandLog();
 
-            neo4jService.CreateObjects(nodes);
-            neo4jService.CreateRelationships(relationships);
+            await neo4jService.CreateObjects(nodes, logWriter);
+            await neo4jService.CreateRelationships(relationships, logWriter);
+
+            logWriter.Dispose();
 
             DateTime endTime = DateTime.Now;
             TimeSpan timeSpan = (endTime - startTime);
