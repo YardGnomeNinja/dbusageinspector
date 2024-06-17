@@ -24,7 +24,7 @@ namespace DBUsageInspector
             {
                 if (referencerContent.Contains(item.Name)) // "Is there any reason to look closer?" check
                 {
-                    Regex itemName = new Regex(@"(FROM|JOIN|INTO|UPDATE|DELETE FROM)?\s?\(?\s?\[?\s?(\w+\.)?" + item.Name + @"\s?\]?\s?\)?""?");
+                    Regex itemName = new Regex(@"(FROM|JOIN|INTO|UPDATE|DELETE FROM)?\s?\(?\s?\[?\s?(\w+\.)?[^\w]" + item.Name + @"[^\w]\s?\]?\s?\)?""?");
 
                     MatchCollection references = itemName.Matches(referencerContent);
 
